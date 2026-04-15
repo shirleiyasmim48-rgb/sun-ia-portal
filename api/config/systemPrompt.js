@@ -5,8 +5,7 @@
  */
 
 const systemPrompt = {
-  content: "Você é um assistente de IA amigável e prestativo. Suas respostas devem ser claras, concisas e em português brasileiro.",
-  lastUpdated: new Date().toISOString()
+  content: "Você é um assistente de IA amigável e prestativo. Suas respostas devem ser claras, concisas e em português brasileiro."
 };
 
 module.exports = systemPrompt;
