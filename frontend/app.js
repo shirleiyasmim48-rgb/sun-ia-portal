@@ -1,6 +1,5 @@
 /**
- * Sun IA — Frontend Logic
- * Autenticação Privada & Design Minimalista
+ * Sun IA — Frontend Logic (Setup & Login Edition)
  */
 
 // Estado Global
@@ -13,24 +12,39 @@ const state = {
 // Elementos DOM
 const loginScreen = document.getElementById('loginScreen');
 const homeScreen = document.getElementById('homeScreen');
-const chatScreen = document.getElementById('chatScreen');
-const imageScreen = document.getElementById('imageScreen');
-const gameScreen = document.getElementById('gameScreen');
-const siteScreen = document.getElementById('siteScreen');
-
+const setupForm = document.getElementById('setupForm');
 const loginForm = document.getElementById('loginForm');
-const passwordInput = document.getElementById('passwordInput');
 const loginError = document.getElementById('loginError');
+const logoutBtn = document.getElementById('logoutBtn');
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', () => {
-  if (state.token) {
-    showScreen('home');
-  } else {
-    showScreen('login');
-  }
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAuthStatus();
   setupEventListeners();
 });
+
+// Verifica se o sistema já tem administrador
+async function checkAuthStatus() {
+  try {
+    const response = await fetch('/api/auth/status');
+    const data = await response.json();
+    
+    if (state.token) {
+      showScreen('home');
+    } else {
+      showScreen('login');
+      if (data.hasAdmin) {
+        loginForm.classList.remove('hidden');
+        setupForm.classList.add('hidden');
+      } else {
+        setupForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+      }
+    }
+  } catch (err) {
+    loginError.innerText = 'Erro ao conectar ao servidor.';
+  }
+}
 
 // Navegação
 function showScreen(screenId) {
@@ -46,15 +60,41 @@ function goHome() {
 
 // Event Listeners
 function setupEventListeners() {
+  // Setup (Primeiro Acesso)
+  setupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('setupUser').value;
+    const password = document.getElementById('setupPass').value;
+    
+    try {
+      const response = await fetch('/api/auth/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert('Conta criada! Agora faça login.');
+        window.location.reload();
+      } else {
+        loginError.innerText = data.message;
+      }
+    } catch (err) {
+      loginError.innerText = 'Erro ao criar conta.';
+    }
+  });
+
   // Login
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const password = passwordInput.value;
+    const username = document.getElementById('loginUser').value;
+    const password = document.getElementById('loginPass').value;
+    
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ username, password })
       });
       const data = await response.json();
       if (data.success) {
@@ -65,8 +105,14 @@ function setupEventListeners() {
         loginError.innerText = data.message;
       }
     } catch (err) {
-      loginError.innerText = 'Erro ao conectar ao servidor.';
+      loginError.innerText = 'Erro ao fazer login.';
     }
+  });
+
+  // Logout
+  logoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('sun_ia_token');
+    window.location.reload();
   });
 
   // Cards de Modo
@@ -77,11 +123,10 @@ function setupEventListeners() {
     });
   });
 
-  // Forms de IA
   setupIAForms();
 }
 
-// Funções de IA
+// Funções de IA (Chat, Imagem, etc.)
 function setupIAForms() {
   // Chat
   const chatForm = document.getElementById('chatForm');
@@ -96,17 +141,12 @@ function setupIAForms() {
 
     addMessage('user', message);
     chatInput.value = '';
-    
     const loadingId = addMessage('ai', 'Processando...');
 
     try {
       const response = await protectedFetch('/api/chat', {
         method: 'POST',
-        body: JSON.stringify({ 
-          message, 
-          history: state.chatHistory,
-          useSearch: useSearch.checked 
-        })
+        body: JSON.stringify({ message, history: state.chatHistory, useSearch: useSearch.checked })
       });
       const data = await response.json();
       updateMessage(loadingId, data.reply);
@@ -147,7 +187,7 @@ function setupIAForms() {
     }
   });
 
-  // Jogos e Sites (Geração de Código)
+  // Jogos e Sites
   ['game', 'site'].forEach(type => {
     const form = document.getElementById(`${type}Form`);
     const input = document.getElementById(`${type}Type`);

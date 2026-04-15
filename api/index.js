@@ -6,30 +6,56 @@ const aiController = require('./controllers/aiController');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SITE_PASSWORD = process.env.SITE_PASSWORD || "Achavedavidaéapaciencia.";
+
+// Estado em memória (Reinicia se a Vercel desligar a função, mas serve para o teste inicial)
+// Para persistência real na Vercel, o usuário deve configurar as variáveis de ambiente.
+let adminUser = {
+  username: process.env.ADMIN_USERNAME || null,
+  password: process.env.ADMIN_PASSWORD || null
+};
 
 // Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
-// Middleware de Autenticação Simples
+// Middleware de Autenticação
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  if (authHeader === SITE_PASSWORD) {
+  if (adminUser.username && authHeader === `${adminUser.username}:${adminUser.password}`) {
     next();
   } else {
-    res.status(401).json({ error: 'Não autorizado. Senha incorreta.' });
+    res.status(401).json({ error: 'Não autorizado. Faça login primeiro.' });
   }
 };
 
+// Rota para verificar se o sistema já tem dono
+app.get('/api/auth/status', (req, res) => {
+  res.json({ hasAdmin: !!adminUser.username });
+});
+
+// Rota de Primeiro Registro (Setup)
+app.post('/api/auth/setup', (req, res) => {
+  const { username, password } = req.body;
+  if (adminUser.username) {
+    return res.status(403).json({ success: false, message: 'O sistema já possui um administrador.' });
+  }
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: 'Usuário e senha são obrigatórios.' });
+  }
+  
+  adminUser.username = username;
+  adminUser.password = password;
+  res.json({ success: true, message: 'Administrador criado com sucesso!' });
+});
+
 // Rota de Login
 app.post('/api/login', (req, res) => {
-  const { password } = req.body;
-  if (password === SITE_PASSWORD) {
-    res.json({ success: true, token: SITE_PASSWORD });
+  const { username, password } = req.body;
+  if (username === adminUser.username && password === adminUser.password) {
+    res.json({ success: true, token: `${username}:${password}` });
   } else {
-    res.status(401).json({ success: false, message: 'Senha incorreta.' });
+    res.status(401).json({ success: false, message: 'Usuário ou senha incorretos.' });
   }
 });
 
@@ -46,28 +72,20 @@ app.post('/api/site', authMiddleware, (req, res) => {
 });
 app.post('/api/deploy', authMiddleware, (req, res) => aiController.deploy(req, res));
 
-// Rota de Saúde (Health Check)
+// Rota de Saúde
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', hasAdmin: !!adminUser.username });
 });
 
-// Rota Fallback para o Frontend (SPA)
+// Rota Fallback para o Frontend
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
 
-// Exportar o app para a Vercel (Serverless)
 module.exports = app;
 
-// Inicialização local (apenas se não estiver na Vercel)
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
-    console.log(`
-    =========================================
-    Sun IA — Sistema Privado
-    Porta: ${PORT}
-    Status: Autenticação Ativa
-    =========================================
-    `);
+    console.log(`Sun IA rodando na porta ${PORT}`);
   });
 }

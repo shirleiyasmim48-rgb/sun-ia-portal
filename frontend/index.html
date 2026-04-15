@@ -12,15 +12,28 @@
 </head>
 <body>
   <div id="app">
-    <!-- Login Screen -->
+    <!-- Auth Screen (Login ou Setup) -->
     <div id="loginScreen" class="screen active">
       <div class="login-container">
         <h1 class="sun-title">Sun IA</h1>
-        <form id="loginForm" class="login-form">
-          <input type="password" id="passwordInput" placeholder="A chave da vida é..." required />
-          <button type="submit" class="login-btn">Entrar</button>
-          <p id="loginError" class="error-msg"></p>
+        
+        <!-- Formulário de Setup (Primeiro Acesso) -->
+        <form id="setupForm" class="login-form hidden">
+          <p class="auth-subtitle">Crie sua conta de administrador</p>
+          <input type="text" id="setupUser" placeholder="Usuário" required />
+          <input type="password" id="setupPass" placeholder="Senha" required />
+          <button type="submit" class="login-btn">Criar Conta</button>
         </form>
+
+        <!-- Formulário de Login (Acesso Normal) -->
+        <form id="loginForm" class="login-form hidden">
+          <p class="auth-subtitle">Acesso Privado</p>
+          <input type="text" id="loginUser" placeholder="Usuário" required />
+          <input type="password" id="loginPass" placeholder="Senha" required />
+          <button type="submit" class="login-btn">Entrar</button>
+        </form>
+
+        <p id="loginError" class="error-msg"></p>
       </div>
     </div>
 
@@ -29,6 +42,7 @@
       <header class="header">
         <h1 class="sun-title-small">Sun IA</h1>
         <p>Explore o poder da Inteligência Artificial</p>
+        <button id="logoutBtn" class="logout-btn">Sair</button>
       </header>
 
       <div class="modes-grid">
