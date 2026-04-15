@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, '..', 'frontend')));
 // Middleware de Autenticação
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  if (adminUser.username && authHeader === `${adminUser.username}:${adminUser.password}`) {
+  if (adminUser.username && authHeader === `Bearer ${adminUser.username}:${adminUser.password}`) {
     next();
   } else {
     res.status(401).json({ error: 'Não autorizado. Faça login primeiro.' });
@@ -35,7 +35,7 @@ app.get('/api/auth/status', (req, res) => {
 });
 
 // Rota de Primeiro Registro (Setup)
-app.post('/api/auth/setup', (req, res) => {
+app.post('/api/setup', (req, res) => {
   const { username, password } = req.body;
   if (adminUser.username) {
     return res.status(403).json({ success: false, message: 'O sistema já possui um administrador.' });
@@ -46,7 +46,7 @@ app.post('/api/auth/setup', (req, res) => {
   
   adminUser.username = username;
   adminUser.password = password;
-  res.json({ success: true, message: 'Administrador criado com sucesso!' });
+  res.json({ success: true, token: `${username}:${password}` });
 });
 
 // Rota de Login

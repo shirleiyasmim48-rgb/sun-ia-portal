@@ -1,52 +1,40 @@
-/* =========================================
-   Sun IA — Minimalist Black & Gold Theme
-   ========================================= */
-
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Sun IA - Mobile First Design */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap');
 
 :root {
-  --color-bg:           #000000;
-  --color-surface:      #0a0a0a;
-  --color-surface-alt:  #111111;
-  --color-border:       #1a1a1a;
-  --color-gold:         #d4af37;
-  --color-gold-hover:   #f1c40f;
-  --color-text:         #ffffff;
-  --color-text-muted:   #666666;
-  --color-error:        #ff4d4d;
-  --radius-sm:          4px;
-  --radius-md:          8px;
-  --radius-lg:          12px;
-  --font-elegant:       'Cormorant Garamond', serif;
-  --font-main:          'Montserrat', sans-serif;
+  --gold: #d4af37;
+  --black: #0a0a0a;
+  --dark-gray: #1a1a1a;
+  --text-gray: #a0a0a0;
+  --white: #ffffff;
+  --transition: all 0.3s ease;
 }
 
-html, body {
-  height: 100%;
-  font-family: var(--font-main);
-  background-color: var(--color-bg);
-  color: var(--color-text);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--black);
+  color: var(--white);
+  line-height: 1.6;
   overflow-x: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* =========================================
-   Layout Principal
-   ========================================= */
-#app {
-  width: 100%;
-  min-height: 100vh;
-}
-
+/* Telas */
 .screen {
   display: none;
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   flex-direction: column;
-  animation: fadeIn 0.8s ease-in-out;
+  animation: fadeIn 0.5s ease;
 }
 
 .screen.active {
@@ -54,341 +42,266 @@ html, body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* =========================================
-   Auth Screen (Login & Setup)
-   ========================================= */
-#loginScreen {
+/* Tela de Login/Setup */
+#login-screen {
   justify-content: center;
   align-items: center;
-  background-color: var(--color-bg);
+  padding: 20px;
+  text-align: center;
 }
 
 .login-container {
-  text-align: center;
   width: 100%;
   max-width: 350px;
-  padding: 20px;
 }
 
-.sun-title {
-  font-family: var(--font-elegant);
-  font-size: 72px;
-  color: var(--color-gold);
+h1.brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem;
+  color: var(--gold);
   margin-bottom: 40px;
-  letter-spacing: 4px;
+  letter-spacing: 5px;
   text-transform: uppercase;
-  animation: slideUp 1s ease-out;
 }
 
-.auth-subtitle {
-  color: var(--color-text-muted);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-}
-
-.login-form {
+.auth-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
-.hidden {
-  display: none !important;
-}
-
-input[type="text"],
-input[type="password"],
-textarea {
+.auth-form input {
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text);
-  padding: 12px;
-  text-align: center;
-  font-size: 16px;
+  border-bottom: 1px solid var(--gold);
+  color: var(--white);
+  padding: 12px 5px;
+  font-size: 1rem;
   outline: none;
-  transition: border-color 0.3s;
-  width: 100%;
-}
-
-input:focus, textarea:focus {
-  border-color: var(--color-gold);
-}
-
-.login-btn {
-  background: transparent;
-  border: 1px solid var(--color-gold);
-  color: var(--color-gold);
-  padding: 12px;
-  cursor: pointer;
-  font-size: 14px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  transition: all 0.3s;
-  margin-top: 10px;
-}
-
-.login-btn:hover {
-  background: var(--color-gold);
-  color: var(--color-bg);
-}
-
-.error-msg {
-  color: var(--color-error);
-  font-size: 12px;
-  margin-top: 15px;
-  min-height: 14px;
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* =========================================
-   Home Screen
-   ========================================= */
-.header {
   text-align: center;
-  padding: 60px 20px;
-  position: relative;
+  transition: var(--transition);
 }
 
-.sun-title-small {
-  font-family: var(--font-elegant);
-  font-size: 32px;
-  color: var(--color-gold);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
+.auth-form input:focus {
+  border-bottom-width: 2px;
 }
 
-.header p {
-  color: var(--color-text-muted);
-  font-weight: 300;
-  letter-spacing: 1px;
-}
-
-.logout-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: transparent;
+.btn-gold {
+  background: var(--gold);
+  color: var(--black);
   border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.logout-btn:hover {
-  color: var(--color-gold);
-}
-
-.modes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 20px 60px;
-}
-
-.mode-card {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  padding: 40px 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.4s;
-}
-
-.mode-card:hover {
-  border-color: var(--color-gold);
-  background-color: var(--color-surface-alt);
-  transform: translateY(-5px);
-}
-
-.mode-icon {
-  font-size: 40px;
-  margin-bottom: 16px;
-  filter: grayscale(1);
-  transition: filter 0.4s;
-}
-
-.mode-card:hover .mode-icon {
-  filter: grayscale(0);
-}
-
-.mode-card h2 {
-  font-size: 18px;
-  font-weight: 400;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-
-.mode-card p {
-  color: var(--color-text-muted);
-  font-size: 12px;
-}
-
-/* =========================================
-   Inner Screens
-   ========================================= */
-.screen-header {
-  display: flex;
-  align-items: center;
-  padding: 20px 40px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.back-btn {
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  font-size: 14px;
-  transition: color 0.3s;
-}
-
-.back-btn:hover {
-  color: var(--color-gold);
-}
-
-.screen-header h2 {
-  flex: 1;
-  text-align: center;
-  font-family: var(--font-elegant);
-  color: var(--color-gold);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-/* =========================================
-   Chat & Content
-   ========================================= */
-.chat-container, .content-container {
-  flex: 1;
-  padding: 40px;
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
-  overflow-y: auto;
-}
-
-.messages {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin-bottom: 40px;
-}
-
-.message-bubble {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  padding: 16px 20px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  line-height: 1.8;
-}
-
-.message.user .message-bubble {
-  border-color: var(--color-gold);
-  color: var(--color-gold);
-}
-
-.input-form {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.send-btn {
-  background: var(--color-gold);
-  color: var(--color-bg);
-  border: none;
-  padding: 12px;
+  padding: 15px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   cursor: pointer;
-  transition: opacity 0.3s;
+  margin-top: 20px;
+  border-radius: 4px;
+  transition: var(--transition);
 }
 
-.send-btn:hover {
+.btn-gold:active {
+  transform: scale(0.98);
   opacity: 0.9;
 }
 
-.form-footer {
+#login-error {
+  color: #ff4d4d;
+  font-size: 0.85rem;
+  margin-top: 15px;
+  min-height: 20px;
+}
+
+/* Layout Principal */
+#main-screen {
+  flex-direction: column;
+}
+
+/* Header Mobile */
+.mobile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 15px 20px;
+  background: var(--dark-gray);
+  border-bottom: 1px solid #333;
 }
 
-.checkbox-label {
-  font-size: 12px;
-  color: var(--color-text-muted);
+.mobile-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--gold);
+  font-size: 1.5rem;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Sidebar (Menu Lateral) */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 80%;
+  max-width: 300px;
+  height: 100%;
+  background: var(--dark-gray);
+  z-index: 1000;
+  transition: var(--transition);
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.nav-item {
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 15px;
+  color: var(--text-gray);
+  transition: var(--transition);
+}
+
+.nav-item.active {
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold);
+}
+
+.nav-item i {
+  font-size: 1.2rem;
+}
+
+/* Área de Conteúdo */
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+#chat-messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-bottom: 20px;
+}
+
+.message {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 15px;
+  font-size: 0.95rem;
+  word-wrap: break-word;
+}
+
+.message.user {
+  align-self: flex-end;
+  background: var(--gold);
+  color: var(--black);
+  border-bottom-right-radius: 2px;
+}
+
+.message.ai {
+  align-self: flex-start;
+  background: var(--dark-gray);
+  color: var(--white);
+  border-bottom-left-radius: 2px;
+  border: 1px solid #333;
+}
+
+/* Input de Chat */
+.input-container {
+  padding: 15px;
+  background: var(--black);
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+#chat-input {
+  flex: 1;
+  background: var(--dark-gray);
+  border: 1px solid #333;
+  border-radius: 20px;
+  color: var(--white);
+  padding: 12px 18px;
+  font-size: 1rem;
+  outline: none;
+  max-height: 120px;
+  resize: none;
+}
+
+#send-btn {
+  background: var(--gold);
+  color: var(--black);
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
-.result-container {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  padding: 20px;
-  min-height: 200px;
-  margin-top: 20px;
+/* Overlay do Menu */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 999;
 }
 
-.code-btn {
-  background: transparent;
-  border: 1px solid var(--color-gold);
-  color: var(--color-gold);
-  padding: 8px 16px;
-  font-size: 12px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.3s;
+.overlay.active {
+  display: block;
 }
 
-.code-btn:hover {
-  background: var(--color-gold);
-  color: var(--color-bg);
-}
-
-/* =========================================
-   Responsive
-   ========================================= */
-@media (max-width: 768px) {
-  .chat-container, .content-container {
-    padding: 20px;
+/* Responsividade para Desktop */
+@media (min-width: 768px) {
+  .mobile-header { display: none; }
+  
+  #main-screen {
+    flex-direction: row;
   }
-  .sun-title {
-    font-size: 48px;
+  
+  .sidebar {
+    position: static;
+    width: 260px;
+    left: 0;
+    box-shadow: none;
+    border-right: 1px solid #333;
   }
-  .screen-header {
-    padding: 20px;
+  
+  .content-area {
+    padding: 30px;
+  }
+  
+  .message {
+    max-width: 70%;
   }
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold);
-}
+.hidden { display: none !important; }

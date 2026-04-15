@@ -16,18 +16,19 @@ const chatMessages = document.getElementById('chat-messages');
 const chatInput = document.getElementById('chat-input');
 const sendBtn = document.getElementById('send-btn');
 const typingIndicator = document.getElementById('typing-indicator');
+const menuToggle = document.getElementById('menu-toggle');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const logoutBtn = document.getElementById('logout-btn');
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
-  // Mostrar tela de login por padrão imediatamente
-  showScreen('login');
-  
-  // Tentar verificar o status do admin em segundo plano
   checkAuthStatus();
   
-  // Se já tiver token, tentar entrar direto
   if (state.token) {
-    showScreen('home');
+    showScreen('main');
+  } else {
+    showScreen('login');
   }
   
   setupEventListeners();
@@ -36,9 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Verifica se o sistema já tem administrador
 async function checkAuthStatus() {
   try {
-    // Usar caminho relativo para a Vercel
     const response = await fetch('/api/auth/status');
-    if (!response.ok) throw new Error('Erro na resposta');
     const data = await response.json();
     
     state.hasAdmin = data.hasAdmin;
@@ -52,9 +51,7 @@ async function checkAuthStatus() {
     }
   } catch (err) {
     console.error('Erro de conexão:', err);
-    // Se falhar, mostramos o login por padrão para não travar a tela
     loginForm.classList.remove('hidden');
-    setupForm.classList.add('hidden');
     loginError.innerText = 'Conectando ao servidor...';
   }
 }
@@ -72,6 +69,10 @@ function showScreen(screenId) {
 
 // Event Listeners
 function setupEventListeners() {
+  // Menu Mobile
+  menuToggle.addEventListener('click', toggleMenu);
+  overlay.addEventListener('click', toggleMenu);
+
   // Login
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -89,16 +90,16 @@ function setupEventListeners() {
       if (response.ok) {
         state.token = data.token;
         localStorage.setItem('sun_ia_token', data.token);
-        showScreen('home');
+        showScreen('main');
       } else {
-        loginError.innerText = data.error || 'Erro ao entrar.';
+        loginError.innerText = data.error || 'Usuário ou senha incorretos.';
       }
     } catch (err) {
       loginError.innerText = 'Erro ao conectar ao servidor.';
     }
   });
 
-  // Setup (Primeiro Registro)
+  // Setup
   setupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = e.target[0].value;
@@ -115,7 +116,7 @@ function setupEventListeners() {
       if (response.ok) {
         state.token = data.token;
         localStorage.setItem('sun_ia_token', data.token);
-        showScreen('home');
+        showScreen('main');
       } else {
         loginError.innerText = data.error || 'Erro ao criar conta.';
       }
@@ -124,31 +125,49 @@ function setupEventListeners() {
     }
   });
 
+  // Logout
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('sun_ia_token');
+    state.token = null;
+    location.reload();
+  });
+
   // Chat
   sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('input', () => {
+    chatInput.style.height = 'auto';
+    chatInput.style.height = chatInput.scrollHeight + 'px';
+  });
+  
   chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
       e.preventDefault();
       sendMessage();
     }
   });
 
   // Menu de Modos
-  document.querySelectorAll('.nav-item').forEach(item => {
+  document.querySelectorAll('.nav-item[data-mode]').forEach(item => {
     item.addEventListener('click', () => {
       const mode = item.dataset.mode;
-      if (mode) switchMode(mode);
+      switchMode(mode);
+      if (window.innerWidth < 768) toggleMenu();
     });
   });
 }
 
-// Lógica de Chat
+function toggleMenu() {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+}
+
 async function sendMessage() {
   const text = chatInput.value.trim();
   if (!text || state.isTyping) return;
 
   addMessage('user', text);
   chatInput.value = '';
+  chatInput.style.height = 'auto';
   setTyping(true);
 
   try {
@@ -167,7 +186,7 @@ async function sendMessage() {
     if (response.ok) {
       addMessage('ai', data.reply);
     } else {
-      addMessage('ai', 'Erro ao processar mensagem. Verifique sua conexão.');
+      addMessage('ai', 'Erro ao processar mensagem.');
     }
   } catch (err) {
     setTyping(false);
@@ -185,7 +204,7 @@ function addMessage(role, text) {
 
 function setTyping(isTyping) {
   state.isTyping = isTyping;
-  typingIndicator.style.display = isTyping ? 'block' : 'none';
+  typingIndicator.classList.toggle('hidden', !isTyping);
 }
 
 function switchMode(mode) {
@@ -194,7 +213,12 @@ function switchMode(mode) {
     item.classList.toggle('active', item.dataset.mode === mode);
   });
   
-  // Limpar chat ao trocar de modo
   chatMessages.innerHTML = '';
-  addMessage('ai', `Modo ${mode.toUpperCase()} ativado. Como posso ajudar?`);
+  const welcomeMessages = {
+    chat: 'Olá! Eu sou o Sun IA. Como posso ajudar você hoje?',
+    image: 'Modo de Imagem ativado. Descreva a imagem que você deseja gerar.',
+    game: 'Modo de Jogos ativado. Que tipo de jogo você quer criar?',
+    site: 'Modo de Sites ativado. Descreva o site que você precisa.'
+  };
+  addMessage('ai', welcomeMessages[mode]);
 }
