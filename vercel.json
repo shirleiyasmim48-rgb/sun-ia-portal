@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "sun-ia-portal",
   "builds": [
     {
       "src": "backend/server.js",

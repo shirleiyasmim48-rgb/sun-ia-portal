@@ -1,11 +1,11 @@
-const geminiService = require('../services/geminiService');
+const aiService = require('../services/aiService');
 const searchService = require('../services/searchService');
 const imageService = require('../services/imageService');
 const deployService = require('../services/deployService');
 
 class AIController {
   /**
-   * Lógica de Chat com suporte a busca em tempo real REAL
+   * Lógica de Chat com suporte a busca em tempo real REAL (Groq Edition)
    */
   async chat(req, res) {
     const { message, history, useSearch } = req.body;
@@ -28,8 +28,8 @@ class AIController {
         context += `\nInstrução: Use os resultados acima para responder de forma atualizada e precisa. Cite fontes se necessário.`;
       }
 
-      // Envia a mensagem original + o contexto de busca para o Gemini
-      const reply = await geminiService.chat(message + context, history);
+      // Envia a mensagem original + o contexto de busca para a Groq
+      const reply = await aiService.chat(message + context, history);
       res.json({ reply });
     } catch (error) {
       console.error('[AIController] Erro no Chat:', error);
@@ -54,14 +54,14 @@ class AIController {
   }
 
   /**
-   * Lógica de Geração de Código (Jogos/Sites) via GeminiService
+   * Lógica de Geração de Código (Jogos/Sites) via AIService (Groq)
    */
   async generateCode(req, res) {
     const { prompt, type } = req.body; // type: 'jogo' ou 'site'
     if (!prompt) return res.status(400).json({ error: 'Prompt é obrigatório.' });
 
     try {
-      const code = await geminiService.generateCode(prompt, type);
+      const code = await aiService.generateCode(prompt, type);
       res.json({ code });
     } catch (error) {
       console.error('[AIController] Erro no Código:', error);
