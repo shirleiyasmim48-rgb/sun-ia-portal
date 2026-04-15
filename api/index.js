@@ -5,7 +5,6 @@ const path = require('path');
 const aiController = require('./controllers/aiController');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Estado em memória (Reinicia se a Vercel desligar a função, mas serve para o teste inicial)
 // Para persistência real na Vercel, o usuário deve configurar as variáveis de ambiente.
@@ -17,7 +16,6 @@ let adminUser = {
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 // Middleware de Autenticação
 const authMiddleware = (req, res, next) => {
@@ -29,12 +27,11 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-// Rota para verificar se o sistema já tem dono
+// Rotas de API
 app.get('/api/auth/status', (req, res) => {
   res.json({ hasAdmin: !!adminUser.username });
 });
 
-// Rota de Primeiro Registro (Setup)
 app.post('/api/setup', (req, res) => {
   const { username, password } = req.body;
   if (adminUser.username) {
@@ -49,7 +46,6 @@ app.post('/api/setup', (req, res) => {
   res.json({ success: true, token: `${username}:${password}` });
 });
 
-// Rota de Login
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   if (username === adminUser.username && password === adminUser.password) {
@@ -59,7 +55,6 @@ app.post('/api/login', (req, res) => {
   }
 });
 
-// Rotas da API Protegidas
 app.post('/api/chat', authMiddleware, (req, res) => aiController.chat(req, res));
 app.post('/api/image', authMiddleware, (req, res) => aiController.generateImage(req, res));
 app.post('/api/game', authMiddleware, (req, res) => {
@@ -72,20 +67,9 @@ app.post('/api/site', authMiddleware, (req, res) => {
 });
 app.post('/api/deploy', authMiddleware, (req, res) => aiController.deploy(req, res));
 
-// Rota de Saúde
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', hasAdmin: !!adminUser.username });
 });
 
-// Rota Fallback para o Frontend
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
-});
-
+// Exportar para a Vercel
 module.exports = app;
-
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`Sun IA rodando na porta ${PORT}`);
-  });
-}

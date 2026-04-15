@@ -37,9 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // Verifica se o sistema já tem administrador
 async function checkAuthStatus() {
   try {
+    // Usar caminho relativo para a Vercel
     const response = await fetch('/api/auth/status');
-    const data = await response.json();
+    if (!response.ok) throw new Error('Servidor offline');
     
+    const data = await response.json();
     state.hasAdmin = data.hasAdmin;
     
     if (data.hasAdmin) {
@@ -51,6 +53,7 @@ async function checkAuthStatus() {
     }
   } catch (err) {
     console.error('Erro de conexão:', err);
+    // Se falhar, mostrar o login por padrão para não travar a tela
     loginForm.classList.remove('hidden');
     loginError.innerText = 'Conectando ao servidor...';
   }
@@ -70,8 +73,8 @@ function showScreen(screenId) {
 // Event Listeners
 function setupEventListeners() {
   // Menu Mobile
-  menuToggle.addEventListener('click', toggleMenu);
-  overlay.addEventListener('click', toggleMenu);
+  if (menuToggle) menuToggle.addEventListener('click', toggleMenu);
+  if (overlay) overlay.addEventListener('click', toggleMenu);
 
   // Login
   loginForm.addEventListener('submit', async (e) => {
@@ -92,7 +95,7 @@ function setupEventListeners() {
         localStorage.setItem('sun_ia_token', data.token);
         showScreen('main');
       } else {
-        loginError.innerText = data.error || 'Usuário ou senha incorretos.';
+        loginError.innerText = data.error || data.message || 'Usuário ou senha incorretos.';
       }
     } catch (err) {
       loginError.innerText = 'Erro ao conectar ao servidor.';
@@ -118,7 +121,7 @@ function setupEventListeners() {
         localStorage.setItem('sun_ia_token', data.token);
         showScreen('main');
       } else {
-        loginError.innerText = data.error || 'Erro ao criar conta.';
+        loginError.innerText = data.error || data.message || 'Erro ao criar conta.';
       }
     } catch (err) {
       loginError.innerText = 'Erro ao conectar ao servidor.';
@@ -126,25 +129,29 @@ function setupEventListeners() {
   });
 
   // Logout
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('sun_ia_token');
-    state.token = null;
-    location.reload();
-  });
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('sun_ia_token');
+      state.token = null;
+      location.reload();
+    });
+  }
 
   // Chat
-  sendBtn.addEventListener('click', sendMessage);
-  chatInput.addEventListener('input', () => {
-    chatInput.style.height = 'auto';
-    chatInput.style.height = chatInput.scrollHeight + 'px';
-  });
-  
-  chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
+  if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+  if (chatInput) {
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = chatInput.scrollHeight + 'px';
+    });
+    
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  }
 
   // Menu de Modos
   document.querySelectorAll('.nav-item[data-mode]').forEach(item => {
@@ -157,8 +164,8 @@ function setupEventListeners() {
 }
 
 function toggleMenu() {
-  sidebar.classList.toggle('open');
-  overlay.classList.toggle('active');
+  if (sidebar) sidebar.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('active');
 }
 
 async function sendMessage() {
@@ -204,7 +211,7 @@ function addMessage(role, text) {
 
 function setTyping(isTyping) {
   state.isTyping = isTyping;
-  typingIndicator.classList.toggle('hidden', !isTyping);
+  if (typingIndicator) typingIndicator.classList.toggle('hidden', !isTyping);
 }
 
 function switchMode(mode) {
