@@ -32,12 +32,14 @@ class AIService {
         { role: "user", content: message }
       ];
 
+      console.log("[AIService] Enviando mensagens para Groq:", JSON.stringify(messages));
       const chatCompletion = await this.groq.chat.completions.create({
         messages: messages,
         model: "llama3-8b-8192",
         temperature: 0.7,
         max_tokens: 1024,
       });
+      console.log("[AIService] Resposta recebida da Groq:", JSON.stringify(chatCompletion));
 
       return chatCompletion.choices[0]?.message?.content || "Sem resposta da IA.";
     } catch (error) {
