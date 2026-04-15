@@ -1,73 +1,45 @@
 const Groq = require("groq-sdk");
-const systemPrompt = require('../config/systemPrompt');
 
-/**
- * AIService (Groq Edition)
- * Utiliza a API da Groq (Llama 3) para chat e geração de código.
- */
 class AIService {
   constructor() {
     this.apiKey = process.env.GROQ_API_KEY;
-    if (this.apiKey && !this.apiKey.includes('xxxx')) {
+    if (this.apiKey) {
       this.groq = new Groq({ apiKey: this.apiKey });
-    } else {
-      console.warn("[AIService] GROQ_API_KEY não configurada. O serviço funcionará em modo de demonstração.");
-      this.isDemo = true;
     }
   }
 
   async chat(message, history = []) {
-    if (this.isDemo) {
-      return `[MODO DEMO] Esta é uma resposta simulada para: "${message}". Configure uma GROQ_API_KEY válida no arquivo .env para usar a IA real.`;
-    }
+    if (!this.groq) return "Erro: GROQ_API_KEY não configurada.";
 
     try {
-      // Converte o histórico para o formato da Groq
       const messages = [
-        { role: "system", content: (typeof systemPrompt === 'string' ? systemPrompt : (systemPrompt.content || "Você é o Sun IA.")) },
-        ...(Array.isArray(history) ? history.map(h => ({
-          role: h.role === 'user' ? 'user' : 'assistant',
-          content: typeof h.content === 'string' ? h.content : (h.parts && h.parts[0] ? h.parts[0].text : "")
-        })) : []),
+        { role: "system", content: "Você é o Sun IA, um assistente prestativo." },
         { role: "user", content: message }
       ];
 
-      console.log("[AIService] Enviando mensagens para Groq:", JSON.stringify(messages));
       const chatCompletion = await this.groq.chat.completions.create({
         messages: messages,
         model: "llama3-8b-8192",
         temperature: 0.7,
-        max_tokens: 1024,
       });
-      console.log("[AIService] Resposta recebida da Groq:", JSON.stringify(chatCompletion));
 
-      return chatCompletion.choices[0]?.message?.content || "Sem resposta da IA.";
+      return chatCompletion.choices[0]?.message?.content || "Sem resposta.";
     } catch (error) {
-      console.error("[AIService] Erro no Chat Groq:", error);
-      throw error;
+      console.error("Erro Groq:", error);
+      return "Erro ao processar mensagem na IA.";
     }
   }
 
   async generateCode(prompt, context = "site") {
-    if (this.isDemo) {
-      return `<!DOCTYPE html><html><body style="background:#121212;color:white;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;"><div><h1>${context.toUpperCase()} (MODO DEMO)</h1><p>Tema: ${prompt}</p><p>Configure sua API Key para gerar código real.</p></div></body></html>`;
-    }
-
+    if (!this.groq) return "Erro: GROQ_API_KEY não configurada.";
     try {
-      const fullPrompt = `Crie um ${context} moderno e funcional em HTML, CSS e JS puro: "${prompt}". 
-      Retorne APENAS o código HTML completo em um único arquivo, sem explicações ou Markdown.`;
-      
       const chatCompletion = await this.groq.chat.completions.create({
-        messages: [{ role: "user", content: fullPrompt }],
-        model: "llama3-70b-8192", // Modelo maior para código
-        temperature: 0.3,
+        messages: [{ role: "user", content: `Gere o código HTML/CSS/JS para: ${prompt}` }],
+        model: "llama3-8b-8192",
       });
-
-      let code = chatCompletion.choices[0]?.message?.content || "";
-      return code.replace(/```html/g, '').replace(/```/g, '').trim();
+      return chatCompletion.choices[0]?.message?.content || "";
     } catch (error) {
-      console.error("[AIService] Erro na Geração de Código Groq:", error);
-      throw error;
+      return "Erro ao gerar código.";
     }
   }
 }
