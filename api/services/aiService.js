@@ -24,7 +24,7 @@ class AIService {
     try {
       // Converte o histórico para o formato da Groq
       const messages = [
-        { role: "system", content: systemPrompt.content || "Você é o Sun IA." },
+        { role: "system", content: (typeof systemPrompt === 'string' ? systemPrompt : (systemPrompt.content || "Você é o Sun IA.")) },
         ...(Array.isArray(history) ? history.map(h => ({
           role: h.role === 'user' ? 'user' : 'assistant',
           content: typeof h.content === 'string' ? h.content : (h.parts && h.parts[0] ? h.parts[0].text : "")
