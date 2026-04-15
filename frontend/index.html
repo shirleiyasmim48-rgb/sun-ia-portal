@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sun IA — Acesso Privado</title>
+  <!-- Fontes Elegantes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+      <div class="login-container">
+        <h1 class="sun-title">Sun IA</h1>
+        <form id="loginForm" class="login-form">
+          <input type="password" id="passwordInput" placeholder="A chave da vida é..." required />
+          <button type="submit" class="login-btn">Entrar</button>
+          <p id="loginError" class="error-msg"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Home Screen (Protected) -->
+    <div id="homeScreen" class="screen">
+      <header class="header">
+        <h1 class="sun-title-small">Sun IA</h1>
+        <p>Explore o poder da Inteligência Artificial</p>
+      </header>
+
+      <div class="modes-grid">
+        <div class="mode-card" data-mode="chat">
+          <div class="mode-icon">💬</div>
+          <h2>Chat IA</h2>
+          <p>Converse com uma IA inteligente</p>
+        </div>
+
+        <div class="mode-card" data-mode="image">
+          <div class="mode-icon">🎨</div>
+          <h2>IA de Imagem</h2>
+          <p>Gere imagens por descrição</p>
+        </div>
+
+        <div class="mode-card" data-mode="game">
+          <div class="mode-icon">🎮</div>
+          <h2>IA de Jogos</h2>
+          <p>Crie jogos simples</p>
+        </div>
+
+        <div class="mode-card" data-mode="site">
+          <div class="mode-icon">🌐</div>
+          <h2>IA de Sites</h2>
+          <p>Gere sites prontos</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Screen (Protected) -->
+    <div id="chatScreen" class="screen">
+      <div class="screen-header">
+        <button class="back-btn" onclick="goHome()">← Voltar</button>
+        <h2>Chat IA</h2>
+      </div>
+      <div class="chat-container">
+        <div id="chatMessages" class="messages"></div>
+        <form id="chatForm" class="input-form">
+          <textarea id="chatInput" placeholder="Digite sua mensagem..." rows="3"></textarea>
+          <div class="form-footer">
+            <label class="checkbox-label">
+              <input type="checkbox" id="useSearch"> 🔍 Pesquisa em tempo real
+            </label>
+            <button type="submit" class="send-btn">Enviar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Image Screen (Protected) -->
+    <div id="imageScreen" class="screen">
+      <div class="screen-header">
+        <button class="back-btn" onclick="goHome()">← Voltar</button>
+        <h2>IA de Imagem</h2>
+      </div>
+      <div class="content-container">
+        <form id="imageForm" class="input-form">
+          <textarea id="imagePrompt" placeholder="Descreva a imagem que deseja gerar..." rows="4"></textarea>
+          <button type="submit" class="send-btn">Gerar Imagem</button>
+        </form>
+        <div id="imageResult" class="result-container"></div>
+      </div>
+    </div>
+
+    <!-- Game Screen (Protected) -->
+    <div id="gameScreen" class="screen">
+      <div class="screen-header">
+        <button class="back-btn" onclick="goHome()">← Voltar</button>
+        <h2>IA de Jogos</h2>
+      </div>
+      <div class="content-container">
+        <form id="gameForm" class="input-form">
+          <input id="gameType" type="text" placeholder="Ex: Jogo da Memória, Flappy Bird, Quiz..." />
+          <button type="submit" class="send-btn">Gerar Jogo</button>
+        </form>
+        <div id="gameResult" class="result-container"></div>
+      </div>
+    </div>
+
+    <!-- Site Screen (Protected) -->
+    <div id="siteScreen" class="screen">
+      <div class="screen-header">
+        <button class="back-btn" onclick="goHome()">← Voltar</button>
+        <h2>IA de Sites</h2>
+      </div>
+      <div class="content-container">
+        <form id="siteForm" class="input-form">
+          <input id="siteType" type="text" placeholder="Ex: Portfólio, Loja Online, Blog..." />
+          <button type="submit" class="send-btn">Gerar Site</button>
+        </form>
+        <div id="siteResult" class="result-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

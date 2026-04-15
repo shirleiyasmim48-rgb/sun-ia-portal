@@ -1,0 +1,372 @@
+/* =========================================
+   Sun IA — Minimalist Black & Gold Theme
+   ========================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-bg:           #000000;
+  --color-surface:      #0a0a0a;
+  --color-surface-alt:  #111111;
+  --color-border:       #1a1a1a;
+  --color-gold:         #d4af37;
+  --color-gold-hover:   #f1c40f;
+  --color-text:         #ffffff;
+  --color-text-muted:   #666666;
+  --color-error:        #ff4d4d;
+  --radius-sm:          4px;
+  --radius-md:          8px;
+  --radius-lg:          12px;
+  --font-elegant:       'Cormorant Garamond', serif;
+  --font-main:          'Montserrat', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-main);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  overflow: hidden;
+}
+
+/* =========================================
+   Layout Principal
+   ========================================= */
+#app {
+  width: 100%;
+  height: 100vh;
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.screen.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* =========================================
+   Login Screen
+   ========================================= */
+#loginScreen {
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-bg);
+}
+
+.login-container {
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+}
+
+.sun-title {
+  font-family: var(--font-elegant);
+  font-size: 72px;
+  color: var(--color-gold);
+  margin-bottom: 40px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  animation: slideUp 1s ease-out;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#passwordInput {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: 12px;
+  text-align: center;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+#passwordInput:focus {
+  border-color: var(--color-gold);
+}
+
+.login-btn {
+  background: transparent;
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+  padding: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+
+.login-btn:hover {
+  background: var(--color-gold);
+  color: var(--color-bg);
+}
+
+.error-msg {
+  color: var(--color-error);
+  font-size: 12px;
+  margin-top: 10px;
+  height: 14px;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   Home Screen
+   ========================================= */
+.sun-title-small {
+  font-family: var(--font-elegant);
+  font-size: 32px;
+  color: var(--color-gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.header {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.header p {
+  color: var(--color-text-muted);
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.modes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.mode-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.mode-card:hover {
+  border-color: var(--color-gold);
+  background-color: var(--color-surface-alt);
+  transform: translateY(-5px);
+}
+
+.mode-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+  filter: grayscale(1);
+  transition: filter 0.4s;
+}
+
+.mode-card:hover .mode-icon {
+  filter: grayscale(0);
+}
+
+.mode-card h2 {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.mode-card p {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+/* =========================================
+   Inner Screens
+   ========================================= */
+.screen-header {
+  display: flex;
+  align-items: center;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.back-btn:hover {
+  color: var(--color-gold);
+}
+
+.screen-header h2 {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-elegant);
+  color: var(--color-gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* =========================================
+   Chat & Content
+   ========================================= */
+.chat-container, .content-container {
+  flex: 1;
+  padding: 40px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.message-bubble {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.message.user .message-bubble {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+.input-form {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+textarea, input[type="text"] {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: 12px;
+  font-family: var(--font-main);
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+textarea:focus, input[type="text"]:focus {
+  border-color: var(--color-gold);
+}
+
+.send-btn {
+  background: var(--color-gold);
+  color: var(--color-bg);
+  border: none;
+  padding: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.send-btn:hover {
+  opacity: 0.9;
+}
+
+/* =========================================
+   Custom Elements
+   ========================================= */
+.form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkbox-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.result-container {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 20px;
+  min-height: 200px;
+}
+
+.code-btn {
+  background: transparent;
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+  padding: 8px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s;
+}
+
+.code-btn:hover {
+  background: var(--color-gold);
+  color: var(--color-bg);
+}
+
+/* =========================================
+   Responsive
+   ========================================= */
+@media (max-width: 768px) {
+  .chat-container, .content-container {
+    padding: 20px;
+  }
+  .sun-title {
+    font-size: 48px;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
